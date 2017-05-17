@@ -200,7 +200,7 @@ extern int FindFreeTcpPort();
 extern int ListenAtTcpPort(int port);
 extern int AcceptTcpConnection(int listenSock);
 
-extern Bool StringToIPAddr(const char *str, unsigned int *addr);
+extern int try_connect(const char *host, const char *port);
 
 
 /* tunnel.c */

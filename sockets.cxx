@@ -179,28 +179,13 @@ int ConnectToTcpAddr(const char* hostname, int port)
   struct sockaddr_in addr;
   int one = 1;
   unsigned int host;
+  char port_s[20];
+  sprintf(port_s, "%d", port);
 
-  if (!StringToIPAddr(hostname, &host)) {
-    fprintf(stderr,"Couldn't convert '%s' to host address\n", hostname);
-    return -1;
-  }
-
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = host;
-
-  sock = socket(AF_INET, SOCK_STREAM, 0);
+  sock = try_connect(hostname, port_s);
   if (sock < 0) {
     fprintf(stderr,programName);
     perror(": ConnectToTcpAddr: socket");
-    return -1;
-  }
-
-  if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-    fprintf(stderr,programName);
-    perror(": ConnectToTcpAddr: connect");
-    close(sock);
     return -1;
   }
 
@@ -329,32 +314,32 @@ int AcceptTcpConnection(int listenSock)
 }
 
 
-/*
- * StringToIPAddr - convert a host string to an IP address.
- */
+int try_connect(const char *host, const char *port) {
+  struct addrinfo hints;
+  struct addrinfo *result, *rp;
+  int sfd, s;
 
-Bool StringToIPAddr(const char *str, unsigned int *addr)
-{
-  struct hostent *hp;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = 0;
+  hints.ai_protocol = 0;
 
-  if (strcmp(str,"") == 0) {
-    *addr = 0; /* local */
-    return True;
+  s = getaddrinfo(host, port, &hints, &result);
+  if (s != 0) {
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
+    return False;
+  };
+
+  for (rp = result; rp != NULL; rp = rp->ai_next) {
+    sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+    if (sfd == -1) continue;
+    if (connect(sfd, rp->ai_addr, rp->ai_addrlen) == 0) break;  // success
+    close(sfd);
   }
 
-  *addr = inet_addr(str);
-
-  if (*addr != (unsigned int)-1)
-    return True;
-
-  hp = gethostbyname(str);
-
-  if (hp) {
-    *addr = *(unsigned int *)hp->h_addr;
-    return True;
-  }
-
-  return False;
+  freeaddrinfo(result);
+  return sfd;
 }
 
 
