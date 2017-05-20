@@ -328,7 +328,7 @@ int try_connect(const char *host, const char *port) {
   s = getaddrinfo(host, port, &hints, &result);
   if (s != 0) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
-    return False;
+    return -1;
   };
 
   for (rp = result; rp != NULL; rp = rp->ai_next) {

@@ -85,6 +85,8 @@ char *vncServerName;
 AppData appData = {
     NULL,   /* encodingsString */
     NULL,   /* passwordFile */
+    NULL,
+    0,
     0,      /* debug */
     4,      /* compressLevel */
     9,      /* qualityLevel */
@@ -280,11 +282,11 @@ GetArgsAndResources(int argc, char **argv)
     /* No colon */
 
     strcpy(vncServerHost, vncServerName);
-    
+
     if(appData.raw_port>0) {
       /* use command-line supplied TCP port */
       vncServerPort = appData.raw_port;
-    } else {  	  
+    } else {
       /* use default port number */
       vncServerPort = SERVER_PORT_OFFSET;
     }
