@@ -131,7 +131,7 @@ usage(void)
   fprintf(stderr,
 	  "TightVNC snapshot version " VNC_SNAPSHOT_VERSION " (based on TightVNC 1.2.8 and RealVNC 3.3.7)\n"
 	  "\n"
-	  "Usage: %s [<OPTIONS>] <HOST>:<DISPLAY#> filename\n"
+	  "Usage: %s [<OPTIONS>] <HOST>[:<DISPLAY#>] filename\n"
 	  "       %s [<OPTIONS>] -listen [<DISPLAY#>] filename\n"
 	  "       %s [<OPTIONS>] -tunnel <HOST>:<DISPLAY#> filename\n"
 	  "       %s [<OPTIONS>] -via <GATEWAY> [<HOST>]:<DISPLAY#> filename\n"
