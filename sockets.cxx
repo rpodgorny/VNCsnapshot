@@ -127,9 +127,10 @@ Bool SetRFBSock(int sock)
 
     struct sockaddr_in peeraddr, myaddr;
     socklen_t addrlen = sizeof(struct sockaddr_in);
+    socklen_t myaddrlen = sizeof(struct sockaddr_in);
 
     getpeername(sock, (struct sockaddr *)&peeraddr, &addrlen);
-    getsockname(sock, (struct sockaddr *)&myaddr, &addrlen);
+    getsockname(sock, (struct sockaddr *)&myaddr, &myaddrlen);
 
     sameMachine = (peeraddr.sin_addr.s_addr == myaddr.sin_addr.s_addr);
 
